@@ -14,6 +14,10 @@ public class UrlFilterInvocationSecurityMetaDataSource implements FilterInvocati
 
     private LinkedHashMap<RequestMatcher, List<ConfigAttribute>> requestMap = new LinkedHashMap<>();
 
+    public UrlFilterInvocationSecurityMetaDataSource(LinkedHashMap<RequestMatcher, List<ConfigAttribute>> requestMap) {
+        this.requestMap = requestMap;
+    }
+
     @Override
     public Collection<ConfigAttribute> getAttributes(Object object) throws IllegalArgumentException {
 
