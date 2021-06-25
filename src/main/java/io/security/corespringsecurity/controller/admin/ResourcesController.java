@@ -5,31 +5,37 @@ import io.security.corespringsecurity.domain.dto.ResourcesDto;
 import io.security.corespringsecurity.domain.entity.Resources;
 import io.security.corespringsecurity.domain.entity.Role;
 import io.security.corespringsecurity.repository.RoleRepository;
+import io.security.corespringsecurity.security.metadatasource.UrlFilterInvocationSecurityMetaDataSource;
 import io.security.corespringsecurity.service.ResourcesService;
 import io.security.corespringsecurity.service.RoleService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Controller
+@RequiredArgsConstructor
 public class ResourcesController {
-	
-	@Autowired
-	private ResourcesService resourcesService;
 
-	@Autowired
-	private RoleRepository roleRepository;
+	private final ResourcesService resourcesService;
 
-	@Autowired
-	private RoleService roleService;
+	private final RoleRepository roleRepository;
+
+
+	private final RoleService roleService;
+
+	private final UrlFilterInvocationSecurityMetaDataSource urlFilterInvocationSecurityMetaDataSource;
 
 	@GetMapping(value="/admin/resources")
 	public String getResources(Model model) throws Exception {
@@ -51,6 +57,7 @@ public class ResourcesController {
 		resources.setRoleSet(roles);
 
 		resourcesService.createResources(resources);
+		urlFilterInvocationSecurityMetaDataSource.reload();
 
 		return "redirect:/admin/resources";
 	}
@@ -89,6 +96,7 @@ public class ResourcesController {
 
 		Resources resources = resourcesService.getResources(Long.valueOf(id));
 		resourcesService.deleteResources(Long.valueOf(id));
+		urlFilterInvocationSecurityMetaDataSource.reload();
 
 		return "redirect:/admin/resources";
 	}
